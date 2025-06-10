@@ -36,12 +36,42 @@ Regular Expression,译作正则表达式或者正规表示法.意思是说:描�
   r = re.findall("a[a-z]e",s) # print ['ape','aze','age']=>这里匹配的是a到z的元素
   r = re.findall("a[^a-z]e",s) # 这种写法表明不需要a-e也就是取反的意思,这里的a-e不需要专门写括号
   r = re.findall("a[^a-z0-9]",s) # 同理:不匹配a-z和0-9,不需要括号隔开,^表示取反("[a-z0-9]",s)就是匹配a-z和0-9.
-  r = re.findall("^a-z0-9A-Z",s) # 表示匹配特殊字符(比如:\n和,)
+  r = re.findall("[^a-z0-9A-Z]",s) # 表示匹配特殊字符(比如:\n和,)
   # 所以其实字符集比通配符更实用一些\
   # 字符集里面[a,p]会被识别为3个元素,但[a-p]就是a到p的意思
   print(r)
   ```
 * **(3) 重复元字符**
+  重复相关的4个元字符: `{} * + ?`
+  * {n,m}:数量范围贪婪符,指定左边原子的数量范围,有{n},{n,}{,m}{n,m}四种写法,其中n与m必须是非负整数
+  * `*` 指定左边原子出现0次或者多次,等同{0,}(它表示0到无穷的意思)
+  * `+` 指定左边原子出现1次或者多次,等同{1,}(它表示1到无穷的意思)
+  * `?` 指定左边原子出现0次或者1次,等同{0,1}(它表示0次到1次)  这个`?`号也可以用来取消贪婪
+      * 关键点:重复默认是贪婪匹配,可以重复符右边添加?取消贪婪匹配
+  ```python
+  import re
+  # {}:指定左边原子的可以重复的数量范围
+  s ="aeeee apple ape agree amaze age animate advertise a\ne a&e a@e a6e a9e"
+  r = re.findall("a.{2}e",s) #相当于"a..e"
+  r = re.findall("a[a-z]{2}e",s) #相当于"a[a-z][a-z]e"
+  r = re.findall("a.{3}e",s)
+  r = re.findall("a.{1,3}e",s) # 优先按最大贪婪匹配3去匹配,就是先用{3}匹配,如果不成功,最后到{1}
+  r = re.findall("a.{1,3}?e",s) # 消除贪婪匹配,按左边最小的{1}开始
+  r = re,findall("a.{1,}?e",s) # 思考这个
+  print(r)
+  # *: 指定左边原子出现0次或者多次,等同{0,}(它表示0到无穷的意思)
+  # +: 指定左边原子出现1次或者多次,等同{1,}(它表示1到无穷的意思)
+  # ?: 指定左边原子出现0次或者1次,等同{0,1}(它表示0次到1次)
+  s ="aeeee apple ape agree amaze age animate advertise a\ne a&e a@e a6e a9e"
+  r = re.findall("a.*e",s) #{0,}
+  r = re.findall("a.*?e",s)
+  r = re.findall("a[a-z]*?e",s)
+  r = re.findall("a[a-z]+?e",s)
+  r = re.findall("a[a-z]?e",s)
+  r = re.findall("a[a-z]??e",s)
+  print(r)
+  重点理解: *?
+  ```
 * **(4) ^和$**
 * **(5) 转义符\\**
 * **(6) ()分组与优先提取**
