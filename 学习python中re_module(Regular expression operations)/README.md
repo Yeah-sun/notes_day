@@ -73,7 +73,58 @@ Regular Expression,译作正则表达式或者正规表示法.意思是说:描�
   重点理解: *?
   ```
 * **(4) ^和$**
+  |^|叫开始边界符或开始锚点符,匹配一行的开头位置|
+  |:-:|:-:|
+  |s|叫做结束边界符或结束锚点符,匹配一行的结束位置|
+  ```python
+  import re
+
+  path = "/aaa/bbb/blog/2021/12/xxx/yyy/zzz"
+  reg = "blog/[0-9]{4}/[0-9]{1,2}"
+  ret = re.findall(reg,path)
+  print(ret)
+  # 显然这个是有匹配结果的,但是这个正确吗?如果作为一个URL路径,这个匹配是不合理的
+  path = "/aaa/bbb/blog/2021/12/xxx/yyy/zzz"
+  reg = "^blog/[0-9]{4}/[0-9]{1,2}$"
+  ret = re.findall(reg,path)
+  print(ret)
+  # ^和$就规定了你的PATH必须以b开头}结尾,就是你必须按照reg规则,不能有其他多余的,在网络路径匹配有很大作用
+  ```
 * **(5) 转义符\\**
+  正则中的转义符和Python字符串的转义符相似,但俩者是俩个功能
+  python代码会先给python解释器,再给RE处理
+  * 赋予某些普通符号特殊功能
+    |元字符|描述|
+    |:-|:-|
+    |\d|匹配一个数字原子,等价于[0-9]|
+    |\D|匹配一个非数字原子,等价于[^0-9]|
+    |\w|匹配一个包括下划线的单词原子,等价于[A-Za-z0-9_]|
+    |\W|匹配任何非单词字符,等价于[^A-Za-z0-9]|
+    |\n|匹配一个换行符|
+    |\t|匹配一个制表符,tab键|
+    |\s|匹配一个任何非空白字符原子|
+    |\b|匹配一个单词边界原子,也就是指单词和非单词原子符间的位置|
+    |\B|匹配一个非单词边界原子,等价于[^\b]|
+    ```python
+    import re
+    s = "The cat sat on caterpillar"
+    reg = r"\bcat\b" # 只匹配完整的`cat`
+    # 为什么要用r,这里的r是raw,是为了避免于python解释器冲突,你也可以用"\\bcat\\b"
+    r = re.findall(reg,s)
+    print(r) # 输出[`cat`]
+
+    s = "encrypt Jsencrypt AESencrypt encrypetDATA encrypt"
+    r = re.findall(r"\bencrypt\b",s)
+    print(r)
+    ```
+  * 取消特殊功能符号以普通化
+    ```python
+    # 回顾在筛选网址时,pattern = r"https?://www.[a-z].com"
+    # 显然这里面.是有问题的,必须给他消除歧义
+    pattern = r"https?://www\.[a-z]\.com"
+    # 那就用\来取消特殊功能使其变成普通字符,其他特殊功能符号也是一样
+    # 再次强调r是提示PYTHON解释器不用处理里面的字符
+    ```
 * **(6) ()分组与优先提取**
 * **(7) |或**
 ### 2. re模块中常用函数
