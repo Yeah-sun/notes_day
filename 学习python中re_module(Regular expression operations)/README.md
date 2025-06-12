@@ -102,7 +102,7 @@ Regular Expression,译作正则表达式或者正规表示法.意思是说:描�
     |\W|匹配任何非单词字符,等价于[^A-Za-z0-9]|
     |\n|匹配一个换行符|
     |\t|匹配一个制表符,tab键|
-    |\s|匹配一个任何非空白字符原子|
+    |\s|匹配一个任何空白字符原子,不仅仅是空格,比如还有\n\t|
     |\b|匹配一个单词边界原子,也就是指单词和非单词原子符间的位置|
     |\B|匹配一个非单词边界原子,等价于[^\b]|
     ```python
@@ -126,6 +126,47 @@ Regular Expression,译作正则表达式或者正规表示法.意思是说:描�
     # 再次强调r是提示PYTHON解释器不用处理里面的字符
     ```
 * **(6) ()分组与优先提取**
+  * ()自带分组和优先提取的功能
+    ```python
+    import re
+    # 示例文本,包含多个域名
+    text = """ 
+    Visit us at user@qq.com for more info.
+    Contanct support at support@qq.com
+    Also, check out admin@my163.com and info@163.com.cn
+    """
+    # 查找所有的匹配项
+    pattern = r'\b([\w.-]+)@163\.com\b'
+    # 查找所有的匹配项
+    matches = re.findall(pattern,text)
+    # 输出结果
+    print(f"{matches}")
+    ```
+    对于这个例子我们可以很好的学习到分组和优先提取,但是如果我只是要分组任何进行整体重复,而不是优先提取:`(?:xxxx)`
 * **(7) |或**
+    * 这个理解其实很简单,就是或,看例子
+      ```python
+      # 案例1
+      import re
+      # 实例文本
+      text = "I like apple, banana, and orange. I also emjoy graps."
+      # 正则表达式匹配'apple','banana'或'orange'
+      pattern = r'apple|banana|orange'
+      # 查找所有匹配项
+      matches = re.findall(pattern,text)
+      #输出结果
+      print(f{matches})
+      ``` 
+      思考()和|的组合
 ### 2. re模块中常用函数
+  re 模块提供了一组正则处理函数,使我们在字符串中搜索匹配项:
+  |函数|描述|
+  |:-|:-|
+  |findall|按指定的正则模式查找文本中所有的正则匹配项,以列表格式返回结果|
+  |search|在字符串中**任何位置**查找首个符合正则模式的匹配项,存在则返回**re.Match对象**,不存在返回None|
+  |match|判定字符串**开始位置**是否匹配正则模式的规则,匹配则返回**re.Match对象**,不存在返回None
+  |split|按指定的正则模式分割字符串,返回一个分割的列表|
+  |sub|把字符串按指定的正则模式来查找符合正则模式的匹配项,并可以替换一个或多个匹配项成其他内容|
+  |compile|compile方法用于编译正则表达式,从而生成一个正则表达式对象.这个对象可以重用,使得多个匹配操作中更高效.
 ### 3. 正则练习
+建议去练习CS50 week six 关于python的习题集.
